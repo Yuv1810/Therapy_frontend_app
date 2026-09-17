@@ -1,7 +1,7 @@
 // src/app/page.tsx
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import {
@@ -11,9 +11,9 @@ import {
   Star,
   Target,
   Shield,
-  ArrowUpRight,
-  Leaf,
   ArrowRight,
+  Menu,
+  X,
 } from "lucide-react";
 
 import gsap from "gsap";
@@ -31,6 +31,7 @@ const FboParticles = dynamic(() => import("@/components/FboParticles"), {
 
 export default function LandingPage() {
   const container = useRef<HTMLDivElement>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useGSAP(
     () => {
@@ -209,7 +210,7 @@ export default function LandingPage() {
         {/* =========================================================
             GLOBAL SCROLL INDICATOR
         ========================================================= */}
-        <div className="global-scroll-indicator fixed top-0 left-4 lg:left-8 h-screen py-32 flex flex-col items-center z-50 pointer-events-none hidden md:flex mix-blend-difference text-white">
+        <div className="global-scroll-indicator fixed top-0 left-4 lg:left-8 h-screen py-32 flex flex-col items-center z-40 pointer-events-none hidden md:flex mix-blend-difference text-white">
           <div className="relative w-[1px] flex-1 bg-white/20">
             <div className="scroll-indicator-line absolute top-0 left-0 w-full h-full bg-white origin-top" />
             <div className="scroll-indicator-dot absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rounded-full" />
@@ -217,20 +218,85 @@ export default function LandingPage() {
         </div>
 
         {/* =========================================================
+            MOBILE/TABLET MENU OVERLAY & SIDEBAR
+        ========================================================= */}
+        <div
+          className={`fixed inset-0 z-50 transition-opacity duration-300 lg:hidden ${
+            isMobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
+        >
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+
+          {/* Sidebar */}
+          <div
+            className={`absolute top-0 left-0 w-[75vw] sm:w-80 h-full bg-[#eef4ed] shadow-2xl transform transition-transform duration-300 flex flex-col ${
+              isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
+          >
+            <div className="p-6 flex items-center justify-between border-b border-[#d8e4d9]/60">
+              <span className="font-serif text-xl tracking-wide text-[#203127]">Menu</span>
+              <button
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="p-2 text-[#203127]"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <nav className="flex flex-col gap-6 p-8 text-xs uppercase tracking-[0.22em] font-semibold text-[#68806d] overflow-y-auto">
+              <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#102015] transition-colors">About</a>
+              <a href="#education" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#102015] transition-colors">Education</a>
+              <a href="#experience" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#102015] transition-colors">Experience</a>
+              <a href="#philosophy" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#102015] transition-colors">Philosophy</a>
+              <a href="#specialties" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#102015] transition-colors">Specialties</a>
+
+              <div className="h-px w-full bg-[#d8e4d9] my-2" />
+
+              <Link href="/client/proceedToPay" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#102015] transition-colors">Payment</Link>
+              <Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#102015] transition-colors">Login / Signup</Link>
+              
+              <Link
+                href="/client/book"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="bg-[#203127] text-center mt-4 hover:bg-[#17241c] text-white px-6 py-4 rounded-full transition-all shadow-md"
+              >
+                Book Session
+              </Link>
+            </nav>
+          </div>
+        </div>
+
+        {/* =========================================================
             NAVBAR
         ========================================================= */}
-        <header className="sticky top-0 z-40 backdrop-blur-xl bg-[#eef4ed]/80 border-b border-[#d8e4d9]/60 px-6 lg:px-16 py-5 flex items-center justify-between">
-          <Link
-            href="/"
-            className="font-serif text-xl tracking-wide text-[#203127] pl-0 md:pl-12 lg:pl-16"
-          >
-            Preetika Mohta
-            <span className="text-[#6d8573] text-[10px] align-super ml-0.5">
-              ®
-            </span>
-          </Link>
+        <header className="sticky top-0 z-40 backdrop-blur-xl bg-[#eef4ed]/80 border-b border-[#d8e4d9]/60 px-4 md:px-6 lg:px-16 py-4 md:py-5 flex items-center justify-between">
+          <div className="flex items-center gap-4 md:pl-12 lg:pl-0">
+            {/* Hamburger Icon for Mobile & Tablet */}
+            <button
+              className="lg:hidden p-1 text-[#203127]"
+              onClick={() => setIsMobileMenuOpen(true)}
+              aria-label="Open Mobile Menu"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
 
-          <nav className="hidden md:flex items-center gap-8 text-xs uppercase tracking-[0.22em] font-semibold text-[#68806d]">
+            <Link
+              href="/"
+              className="font-serif text-xl tracking-wide text-[#203127] lg:pl-16"
+            >
+              Preetika Mohta
+              <span className="text-[#6d8573] text-[10px] align-super ml-0.5">
+                ®
+              </span>
+            </Link>
+          </div>
+
+          {/* Desktop Navigation Links */}
+          <nav className="hidden lg:flex items-center gap-8 text-xs uppercase tracking-[0.22em] font-semibold text-[#68806d]">
             <a
               href="#about"
               className="hover:text-[#102015] transition-colors"
@@ -267,10 +333,11 @@ export default function LandingPage() {
             </a>
           </nav>
 
-          <div className="flex items-center gap-4 lg:gap-5">
+          {/* Desktop Right Side CTA */}
+          <div className="hidden lg:flex items-center gap-5">
             <Link
               href="/client/proceedToPay"
-              className="hidden lg:block text-xs uppercase tracking-[0.2em] font-semibold text-[#68806d] hover:text-[#102015]"
+              className="text-xs uppercase tracking-[0.2em] font-semibold text-[#68806d] hover:text-[#102015]"
             >
               Payment
             </Link>
@@ -323,7 +390,7 @@ export default function LandingPage() {
           <div className="blob-2 absolute bottom-10 right-20 w-96 h-96 rounded-full bg-[#d8e8d5]/20 blur-[120px]" />
 
           {/* HERO CONTENT */}
-          <div className="relative z-10 text-center px-6 max-w-5xl mx-auto space-y-8">
+          <div className="relative z-10 text-center px-6 max-w-5xl mx-auto space-y-8 md:pl-12 lg:pl-16">
             <p className="hero-subtitle text-[20px] uppercase tracking-[0.28em] text-[#d8e6d9] font-bold">
               Clinical Psychologist
             </p>
@@ -371,7 +438,7 @@ export default function LandingPage() {
           </div>
 
           {/* ACTIVE BADGE */}
-          <div className="hero-badge absolute top-8 right-8 bg-[#132017]/90 border border-[#314438] backdrop-blur-xl rounded-full px-5 py-3 flex items-center gap-3 shadow-xl">
+          <div className="hero-badge absolute top-8 right-8 bg-[#132017]/90 border border-[#314438] backdrop-blur-xl rounded-full px-5 py-3 hidden md:flex items-center gap-3 shadow-xl">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
 
@@ -387,16 +454,18 @@ export default function LandingPage() {
         {/* =========================================================
             INTRO
         ========================================================= */}
-        <section className="px-6 lg:px-16 pt-28 pb-20 max-w-7xl mx-auto text-center space-y-6">
-          <h2 className="reveal-up font-serif text-4xl sm:text-5xl text-[#1b2c20] font-light leading-[1.15] max-w-4xl mx-auto">
-            A space to pause, reflect, and reconnect.
-          </h2>
+        <section className="px-6 lg:px-16 pt-28 pb-20">
+          <div className="max-w-7xl mx-auto text-center space-y-6 md:pl-12 lg:pl-16">
+            <h2 className="reveal-up font-serif text-4xl sm:text-5xl text-[#1b2c20] font-light leading-[1.15] max-w-4xl mx-auto">
+              A space to pause, reflect, and reconnect.
+            </h2>
 
-          <p className="reveal-up text-[#607264] text-lg max-w-2xl mx-auto font-light leading-relaxed">
-            Therapy tailored to your experiences, helping you make sense of
-            what you feel, understand what you need, and move towards
-            meaningful change.
-          </p>
+            <p className="reveal-up text-[#607264] text-lg max-w-2xl mx-auto font-light leading-relaxed">
+              Therapy tailored to your experiences, helping you make sense of
+              what you feel, understand what you need, and move towards
+              meaningful change.
+            </p>
+          </div>
         </section>
 
         {/* =========================================================
@@ -406,7 +475,7 @@ export default function LandingPage() {
           id="about"
           className="bg-white border-y border-[#d9e4db] py-28 px-6 lg:px-16"
         >
-          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-14 pl-0 md:pl-12 lg:pl-16">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-14 md:pl-12 lg:pl-16">
             <div className="reveal-up md:col-span-4 space-y-3">
               <span className="text-[10px] uppercase tracking-[0.22em] text-[#7b8d7f] font-bold">
                 The Clinician
@@ -437,7 +506,7 @@ export default function LandingPage() {
               <p className="reveal-up">
                 I believe therapy begins with feeling heard and understood.
                 Every person brings their own story, experiences, and ways of
-                making sense of the world — and therapy should honour that
+                making sense of the world and therapy should honour that
                 individuality.
               </p>
 
@@ -452,8 +521,7 @@ export default function LandingPage() {
               <p className="reveal-up">
                 Whether you’re navigating difficult emotions, relationships,
                 life transitions, or simply trying to understand yourself
-                better, this is a space to explore, reflect, and move forward —
-                at your own pace.
+                better, this is a space to explore, reflect, and move forward at your own pace.
               </p>
             </div>
           </div>
@@ -462,61 +530,60 @@ export default function LandingPage() {
         {/* =========================================================
             EDUCATION BACKGROUND
         ========================================================= */}
-        <section
-          id="education"
-          className="py-28 px-6 lg:px-16 max-w-7xl mx-auto pl-0 md:pl-20 lg:pl-24"
-        >
-          <div className="reveal-up text-center max-w-2xl mx-auto mb-16">
-            <span className="text-[10px] uppercase tracking-[0.22em] text-[#7a8c7e] font-bold block mb-3">
-              Academic Rigor
-            </span>
-
-            <h3 className="font-serif text-4xl text-[#1c2d22] font-light">
-              Educational Background
-            </h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="reveal-up bg-white border border-[#dbe7dc] rounded-3xl p-7 space-y-4 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500">
-              <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#4f6554]">
-                Advanced Specialization
+        <section id="education" className="py-28 px-6 lg:px-16">
+          <div className="max-w-7xl mx-auto md:pl-12 lg:pl-16">
+            <div className="reveal-up text-center max-w-2xl mx-auto mb-16">
+              <span className="text-[10px] uppercase tracking-[0.22em] text-[#7a8c7e] font-bold block mb-3">
+                Academic Rigor
               </span>
 
-              <h4 className="font-serif text-xl text-[#1e2d22]">
-                M.Phil. in Clinical Psychology
-              </h4>
-
-              <p className="text-[#607264] text-sm font-light">
-                The ICFAI University, Tripura
-              </p>
+              <h3 className="font-serif text-4xl text-[#1c2d22] font-light">
+                Educational Background
+              </h3>
             </div>
 
-            <div className="reveal-up bg-white border border-[#dbe7dc] rounded-3xl p-7 space-y-4 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500">
-              <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#4f6554]">
-                Post-Graduate Study
-              </span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="reveal-up bg-white border border-[#dbe7dc] rounded-3xl p-7 space-y-4 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500">
+                <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#4f6554]">
+                  Advanced Specialization
+                </span>
 
-              <h4 className="font-serif text-xl text-[#1e2d22]">
-                M.Sc. in Clinical Psychology
-              </h4>
+                <h4 className="font-serif text-xl text-[#1e2d22]">
+                  M.Phil. in Clinical Psychology
+                </h4>
 
-              <p className="text-[#607264] text-sm font-light">
-                CHRIST (Deemed to be) University, Bangalore
-              </p>
-            </div>
+                <p className="text-[#607264] text-sm font-light">
+                  The ICFAI University, Tripura
+                </p>
+              </div>
 
-            <div className="reveal-up bg-white border border-[#dbe7dc] rounded-3xl p-7 space-y-4 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500">
-              <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#4f6554]">
-                Undergraduate Foundation
-              </span>
+              <div className="reveal-up bg-white border border-[#dbe7dc] rounded-3xl p-7 space-y-4 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500">
+                <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#4f6554]">
+                  Post Graduate Study
+                </span>
 
-              <h4 className="font-serif text-xl text-[#1e2d22]">
-                B.A. in Applied Psychology
-              </h4>
+                <h4 className="font-serif text-xl text-[#1e2d22]">
+                  M.Sc. in Clinical Psychology
+                </h4>
 
-              <p className="text-[#607264] text-sm font-light">
-                Amity University, Kolkata
-              </p>
+                <p className="text-[#607264] text-sm font-light">
+                  CHRIST (Deemed to be) University, Bangalore
+                </p>
+              </div>
+
+              <div className="reveal-up bg-white border border-[#dbe7dc] rounded-3xl p-7 space-y-4 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500">
+                <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#4f6554]">
+                  Undergraduate Foundation
+                </span>
+
+                <h4 className="font-serif text-xl text-[#1e2d22]">
+                  B.A. in Applied Psychology
+                </h4>
+
+                <p className="text-[#607264] text-sm font-light">
+                  Amity University, Kolkata
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -526,9 +593,9 @@ export default function LandingPage() {
         ========================================================= */}
         <section
           id="philosophy"
-          className="bg-white border-y border-[#d9e4db] py-28 px-6 lg:px-16 max-w-full"
+          className="bg-white border-y border-[#d9e4db] py-28 px-6 lg:px-16"
         >
-          <div className="max-w-7xl mx-auto pl-0 md:pl-20 lg:pl-24">
+          <div className="max-w-7xl mx-auto md:pl-12 lg:pl-16">
             <div className="reveal-up text-center max-w-2xl mx-auto mb-16">
               <span className="text-[10px] uppercase tracking-[0.22em] text-[#7a8c7e] font-bold block mb-3">
                 Methodological Pillars
@@ -555,7 +622,7 @@ export default function LandingPage() {
               <CardCard
                 icon={<Sparkles className="w-5 h-5 text-[#4f6554]" />}
                 title="Growth"
-                description="Change happens at your own pace. Through reflection and personalised therapeutic work, we work towards healthier ways of coping, meaningful change, and greater self-understanding."
+                description="Change happens at your own pace. Through reflection and personalised therapeutic work, we work towards healthier ways of coping, meaningful change, and greater self understanding."
               />
             </div>
           </div>
@@ -568,7 +635,7 @@ export default function LandingPage() {
           id="specialties"
           className="bg-[#16231a] py-28 px-6 lg:px-16 text-white"
         >
-          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-14 pl-0 md:pl-12 lg:pl-16">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-14 md:pl-12 lg:pl-16">
             <div className="reveal-up lg:col-span-5 space-y-4">
               <h3 className="font-serif text-4xl font-light leading-tight">
                 A space to understand,{" "}
@@ -583,12 +650,12 @@ export default function LandingPage() {
             <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <SpecialtyItem
                 title="Psychodiagnostics & Personal Growth"
-                subtitle="Comprehensive psychological testing paired with insight-oriented therapy for self-understanding."
+                subtitle="Comprehensive psychological testing paired with insight oriented therapy for self understanding."
               />
 
               <SpecialtyItem
                 title="Anxiety & Burnout Recovery"
-                subtitle="Evidence-based treatment for panic cycles combined with relief for chronic stress and emotional fatigue."
+                subtitle="Evidence based treatment for panic cycles combined with relief for chronic stress and emotional fatigue."
               />
 
               <SpecialtyItem
@@ -611,7 +678,7 @@ export default function LandingPage() {
           id="experience"
           className="bg-[#121c15] text-white py-28 px-6 lg:px-16 border-t border-[#233126]"
         >
-          <div className="max-w-7xl mx-auto space-y-16 pl-0 md:pl-12 lg:pl-16">
+          <div className="max-w-7xl mx-auto space-y-16 md:pl-12 lg:pl-16">
             <div className="reveal-up text-center max-w-2xl mx-auto space-y-3">
               <span className="text-[10px] uppercase tracking-[0.22em] text-[#8ca591] font-bold block">
                 Clinical Track Record
@@ -667,7 +734,7 @@ export default function LandingPage() {
                   location: "Bangalore",
                 },
                 {
-                  name: "Caring Minds - Institute of Mental Health",
+                  name: "Caring Minds Institute of Mental Health",
                   location: "Kolkata",
                 },
               ].map((item, idx) => (
@@ -697,7 +764,7 @@ export default function LandingPage() {
             FOOTER
         ========================================================= */}
         <footer className="bg-[#0f1712] text-[#8da091] py-16 px-6 lg:px-16 border-t border-[#233126]">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 pb-12 border-b border-[#233126] pl-0 md:pl-12 lg:pl-16">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 pb-12 border-b border-[#233126] md:pl-12 lg:pl-16">
             <div className="md:col-span-4 space-y-4">
               <p className="font-serif text-2xl text-white">
                 Preetika Mohta
@@ -814,7 +881,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="max-w-7xl mx-auto pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[#6c7d6f] pl-0 md:pl-12 lg:pl-16">
+          <div className="max-w-7xl mx-auto pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[#6c7d6f] md:pl-12 lg:pl-16">
             <p>
               © {new Date().getFullYear()} Preetika Mohta Practice. All rights
               reserved.

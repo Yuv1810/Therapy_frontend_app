@@ -1,6 +1,95 @@
 // src/app/client/query/page.tsx
 'use client';
 
+import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { PageTransition, FadeInUp } from '@/components/motionWrappers';
+import { ArrowLeft, Clock } from 'lucide-react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+
+export default function RaiseQuery() {
+  return (
+    <PageTransition>
+      <div className="min-h-screen bg-[#eef4ed] text-[#1f2b23] antialiased selection:bg-[#bfd2c2] relative overflow-hidden">
+
+        {/* Ambient blobs */}
+        <motion.div
+          animate={{ scale: [1, 1.1, 0.95, 1], rotate: [0, 60, 180, 360] }}
+          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+          className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#93b59b]/15 rounded-full blur-[100px] pointer-events-none"
+        />
+        <motion.div
+          animate={{ scale: [1, 0.9, 1.1, 1], rotate: [360, 240, 120, 0] }}
+          transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
+          className="absolute bottom-0 left-0 w-[450px] h-[450px] bg-[#d8e8d5]/20 rounded-full blur-[90px] pointer-events-none"
+        />
+
+        {/* Grain overlay */}
+        <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-[radial-gradient(#1f2b23_1px,transparent_1px)] [background-size:18px_18px]" />
+
+        <div className="relative z-10 max-w-xl mx-auto py-16 px-4 flex flex-col items-center justify-center min-h-screen -mt-16">
+
+          {/* Back link */}
+          <FadeInUp>
+            <div className="text-center mb-8">
+              <Link
+                href="/"
+                className="group inline-flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-[#68806d] hover:text-[#1f2b23] transition-colors"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
+                Return to Showcase
+              </Link>
+            </div>
+          </FadeInUp>
+
+          <FadeInUp delay={0.1} className="w-full">
+            <Card className="bg-white/90 backdrop-blur-md border-[#d8e4d9]/60 shadow-2xl rounded-3xl relative overflow-hidden group">
+              <div className="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-transparent via-[#6d8573]/40 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-1000" />
+
+              <CardContent className="px-8 py-16 flex flex-col items-center text-center space-y-6">
+                <div className="w-16 h-16 bg-[#f5faf5] rounded-full flex items-center justify-center border border-[#d8e4d9]">
+                  <Clock className="w-8 h-8 text-[#6d8573]" />
+                </div>
+                
+                <div className="space-y-2">
+                  <span className="text-[10px] uppercase tracking-[0.22em] text-[#7a8c7e] font-bold block mb-2">
+                    Under Construction
+                  </span>
+                  <h2 className="font-serif text-3xl text-[#1a2b1f] font-light">
+                    Feature Coming Soon
+                  </h2>
+                  <p className="text-[#68806d] text-sm font-light leading-relaxed mt-4 max-w-sm mx-auto">
+                    The online clinical inquiry submission system is currently being developed. Please check back later to utilize this feature.
+                  </p>
+                </div>
+
+                <div className="pt-6 w-full border-t border-[#d8e4d9]">
+                  <p className="text-xs text-[#68806d] font-light mb-4">
+                    Looking to book a session right away?
+                  </p>
+                  <Link
+                    href="/client/book"
+                    className="w-full inline-block bg-[#203127] text-white hover:bg-[#17241c] transition-all font-medium py-4 rounded-xl text-xs uppercase tracking-widest shadow-md"
+                  >
+                    Schedule Consultation
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          </FadeInUp>
+        </div>
+      </div>
+    </PageTransition>
+  );
+}
+
+/* =========================================================
+   ORIGINAL CODE COMMENTED OUT FOR FUTURE USE
+=========================================================
+
+'use client';
+
 import React, { useState } from 'react';
 import { useAtom } from 'jotai';
 import { queriesAtom } from '@/store/atom';
@@ -48,7 +137,7 @@ export default function RaiseQuery() {
     <PageTransition>
       <div className="min-h-screen bg-[#eef4ed] text-[#1f2b23] antialiased selection:bg-[#bfd2c2] relative overflow-hidden">
 
-        {/* Ambient blobs */}
+        // Ambient blobs 
         <motion.div
           animate={{ scale: [1, 1.1, 0.95, 1], rotate: [0, 60, 180, 360] }}
           transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
@@ -60,12 +149,12 @@ export default function RaiseQuery() {
           className="absolute bottom-0 left-0 w-[450px] h-[450px] bg-[#d8e8d5]/20 rounded-full blur-[90px] pointer-events-none"
         />
 
-        {/* Grain overlay */}
+        // Grain overlay 
         <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-[radial-gradient(#1f2b23_1px,transparent_1px)] [background-size:18px_18px]" />
 
         <div className="relative z-10 max-w-xl mx-auto py-16 px-4">
 
-          {/* Back link */}
+          // Back link 
           <FadeInUp>
             <div className="text-center mb-8">
               <Link
@@ -146,3 +235,5 @@ export default function RaiseQuery() {
     </PageTransition>
   );
 }
+
+========================================================= */
